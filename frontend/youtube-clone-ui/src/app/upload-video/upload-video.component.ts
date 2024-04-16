@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import {NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry, NgxFileDropModule} from 'ngx-file-drop';
+import {MatButton} from "@angular/material/button";
+import {VideoService} from "../video.service";
 
 @Component({
   selector: 'app-upload-video',
   templateUrl: './upload-video.component.html',
   standalone: true,
   imports: [
-    NgxFileDropModule
+    NgxFileDropModule,
+    MatButton
   ],
   styleUrls: ['./upload-video.component.css']
 })
@@ -14,6 +17,10 @@ export class UploadVideoComponent {
 
   public files: NgxFileDropEntry[] = [];
   fileUploaded: boolean = false;
+  fileEntry: FileSystemFileEntry | undefined;
+
+  constructor(private videoService: VideoService) {
+  }
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
@@ -21,13 +28,12 @@ export class UploadVideoComponent {
 
       // Is it a file?
       if (droppedFile.fileEntry.isFile) {
-        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        fileEntry.file((file: File) => {
-
+        this.fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        this.fileEntry.file((file: File) => {
+          this.fileUploaded = true;
           // Here you can access the real file
           console.log(droppedFile.relativePath, file);
 
-          this.fileUploaded = true;
           /**
            // You could upload it like this:
            const formData = new FormData()
@@ -53,11 +59,20 @@ export class UploadVideoComponent {
     }
   }
 
-  public fileOver(event: any){
+  public fileOver(event: any) {
     console.log(event);
   }
 
-  public fileLeave(event: any){
+  public fileLeave(event: any) {
     console.log(event);
+  }
+
+  uploadVideo() {
+    if (this.fileEntry !== undefined) {
+      this.videoService.uploadVideo(this.fileEntry).subscribe(data => {
+          console.log("Video uploaded successfully - Video Id is - " + data.videoId);
+        }
+      )
+    }
   }
 }
