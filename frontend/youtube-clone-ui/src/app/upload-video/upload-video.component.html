@@ -14,10 +14,16 @@
       </tr>
       </thead>
       <tbody class="upload-name-style">
-      <tr *ngFor="let item of files; let i=index">
+      <tr *ngFor="let item of files">
         <td><strong>{{ item.relativePath }}</strong></td>
       </tr>
       </tbody>
     </table>
   </div>
+
+  <div *ngIf="this.fileUploaded">
+    <button (click)="uploadVideo()" mat-button>Upload</button>
+  </div>
+
+
 </div>
