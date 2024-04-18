@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {MatToolbar} from "@angular/material/toolbar";
+import {MatToolbar, MatToolbarRow} from "@angular/material/toolbar";
 import {MatIcon} from "@angular/material/icon";
 import {MatIconButton} from "@angular/material/button";
 
@@ -10,7 +10,8 @@ import {MatIconButton} from "@angular/material/button";
   imports: [
     MatToolbar,
     MatIcon,
-    MatIconButton
+    MatIconButton,
+    MatToolbarRow
   ],
   styleUrls: ['./header.component.css']
 })
