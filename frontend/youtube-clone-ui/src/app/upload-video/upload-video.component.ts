@@ -1,31 +1,33 @@
 import { Component } from '@angular/core';
-import {NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry, NgxFileDropModule} from 'ngx-file-drop';
-import {MatButton} from "@angular/material/button";
-import {VideoService} from "../video.service";
+import {
+  NgxFileDropEntry,
+  FileSystemFileEntry,
+  FileSystemDirectoryEntry,
+  NgxFileDropModule,
+} from 'ngx-file-drop';
+import { MatButton } from '@angular/material/button';
+import { VideoService } from '../service/video.service';
+import { NgForOf, NgIf } from '@angular/common';
+import { HttpService } from '../service/httpService.service';
 
 @Component({
   selector: 'app-upload-video',
   templateUrl: './upload-video.component.html',
   standalone: true,
-  imports: [
-    NgxFileDropModule,
-    MatButton
-  ],
-  styleUrls: ['./upload-video.component.css']
+  imports: [NgxFileDropModule, MatButton, NgIf, NgForOf],
+  providers: [VideoService, HttpService],
+  styleUrls: ['./upload-video.component.css'],
 })
 export class UploadVideoComponent {
-
   public files: NgxFileDropEntry[] = [];
   fileUploaded: boolean = false;
   fileEntry: FileSystemFileEntry | undefined;
 
-  constructor(private videoService: VideoService) {
-  }
+  constructor(private videoService: VideoService) {}
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
     for (const droppedFile of files) {
-
       // Is it a file?
       if (droppedFile.fileEntry.isFile) {
         this.fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
@@ -49,7 +51,6 @@ export class UploadVideoComponent {
            // Sanitized logo returned from backend
            })
            **/
-
         });
       } else {
         // It was a directory (empty directories are added, otherwise only files)
@@ -69,10 +70,11 @@ export class UploadVideoComponent {
 
   uploadVideo() {
     if (this.fileEntry !== undefined) {
-      this.videoService.uploadVideo(this.fileEntry).subscribe(data => {
-          console.log("Video uploaded successfully - Video Id is - " + data.videoId);
-        }
-      )
+      this.videoService.uploadVideo(this.fileEntry).subscribe((data) => {
+        console.log(
+          'Video uploaded successfully - Video Id is - ' + data.videoId
+        );
+      });
     }
   }
 }
