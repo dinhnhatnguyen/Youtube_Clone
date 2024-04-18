@@ -5,7 +5,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {NgxFileDropModule} from "ngx-file-drop";
 import {HeaderComponent} from "./header/header.component";
 import {MatButtonModule} from "@angular/material/button";
-import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatToolbarModule, MatToolbarRow} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 
 
@@ -20,7 +20,8 @@ import {MatIconModule} from "@angular/material/icon";
     HeaderComponent,
     MatButtonModule,
     MatToolbarModule,
-    MatIconModule
+    MatIconModule,
+    MatToolbarRow
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
