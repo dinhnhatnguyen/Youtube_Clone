@@ -5,10 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Data
@@ -16,16 +12,14 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class VideoDto {
-    private String videoId;
-    @NotBlank
-    private String videoName;
-    @NotBlank
+    private String id;
+    private String title;
     private String description;
-    @Size(min = 1)
     private Set<String> tags;
+    private String videoUrl;
     private VideoStatus videoStatus;
-    @NotBlank
-    private String url;
-    @NotBlank
     private String thumbnailUrl;
+    private Integer likeCount;
+    private Integer dislikeCount;
+    private Integer viewCount;
 }

@@ -9,6 +9,7 @@ import { MatButton } from '@angular/material/button';
 import { VideoService } from '../service/video.service';
 import { NgForOf, NgIf } from '@angular/common';
 import { HttpService } from '../service/httpService.service';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-upload-video',
@@ -18,24 +19,29 @@ import { HttpService } from '../service/httpService.service';
   providers: [VideoService, HttpService],
   styleUrls: ['./upload-video.component.css'],
 })
+
+
 export class UploadVideoComponent {
+
   public files: NgxFileDropEntry[] = [];
   fileUploaded: boolean = false;
   fileEntry: FileSystemFileEntry | undefined;
 
-  constructor(private videoService: VideoService) {}
+  constructor(private videoService: VideoService, private router: Router) {
+  }
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
     for (const droppedFile of files) {
+
       // Is it a file?
       if (droppedFile.fileEntry.isFile) {
         this.fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         this.fileEntry.file((file: File) => {
-          this.fileUploaded = true;
           // Here you can access the real file
           console.log(droppedFile.relativePath, file);
 
+          this.fileUploaded = true;
           /**
            // You could upload it like this:
            const formData = new FormData()
@@ -51,6 +57,7 @@ export class UploadVideoComponent {
            // Sanitized logo returned from backend
            })
            **/
+
         });
       } else {
         // It was a directory (empty directories are added, otherwise only files)
@@ -70,11 +77,13 @@ export class UploadVideoComponent {
 
   uploadVideo() {
     if (this.fileEntry !== undefined) {
-      this.videoService.uploadVideo(this.fileEntry).subscribe((data) => {
-        console.log(
-          'Video uploaded successfully - Video Id is - ' + data.videoId
-        );
-      });
+      console.log(this.fileEntry);
+
+      this.fileEntry.file(file => {
+        this.videoService.uploadVideo(file).subscribe(data => {
+          this.router.navigateByUrl("/save-video-details/" + data.videoId);
+        })
+      })
     }
   }
 }

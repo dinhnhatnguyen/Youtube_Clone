@@ -22,22 +22,41 @@ public class VideoService {
         video.setVideoUrl(videoUrl);
 
         var savedVideo = videoRepository.save(video);
-        return new UploadVideoResponse(savedVideo.getId());
+        return new UploadVideoResponse(savedVideo.getId(), savedVideo.getVideoUrl());
+
     }
 
-    public VideoDto editVideoMetadata(VideoDto videoMetaDataDto) {
-        var video = videoRepository.findById(videoMetaDataDto.getVideoId())
-                .orElseThrow(() -> new YoutubeCloneException("Cannot find Video with ID - " + videoMetaDataDto.getVideoId()));
+    public VideoDto editVideo(VideoDto videoDto) {
+        // Find the video by videoId
+        var savedVideo = getVideoById(videoDto.getId());
+        // Map the videoDto fields to video
+        savedVideo.setTitle(videoDto.getTitle());
+        savedVideo.setDescription(videoDto.getDescription());
+        savedVideo.setTags(videoDto.getTags());
+        savedVideo.setThumbnailUrl(videoDto.getThumbnailUrl());
+        savedVideo.setVideoStatus(videoDto.getVideoStatus());
 
-        video.setTitle(videoMetaDataDto.getVideoName());
-        video.setDescription(videoMetaDataDto.getDescription());
-        video.setVideoUrl(videoMetaDataDto.getUrl());
-        // Ignore Channel ID as it should not be possible to change the Channel of a Video
-        video.setTags(videoMetaDataDto.getTags());
-        video.setVideoStatus(videoMetaDataDto.getVideoStatus());
-        // View Count is also ignored as its calculated independently
-        videoRepository.save(video);
-        return null;
+        // save the video  to the database
+        videoRepository.save(savedVideo);
+        return videoDto;
     }
+
+    public String uploadThumbnail(MultipartFile file, String videoId) {
+        var savedVideo = getVideoById(videoId);
+
+        String thumbnailUrl = s3Service.uploadFile(file);
+
+        savedVideo.setThumbnailUrl(thumbnailUrl);
+
+        videoRepository.save(savedVideo);
+        return thumbnailUrl;
+    }
+
+    Video getVideoById(String videoId) {
+        return videoRepository.findById(videoId)
+                .orElseThrow(() -> new YoutubeCloneException("Video not found"));
+    }
+
+
 }
 

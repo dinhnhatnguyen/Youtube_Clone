@@ -5,7 +5,6 @@ import com.NhatNguyen.Youtube_clone.dto.VideoDto;
 import com.NhatNguyen.Youtube_clone.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +21,15 @@ public class VideoController {
         return videoService.uploadVideo(videoFile);
     }
 
+    @PostMapping("/thumbnail")
+    @ResponseStatus(HttpStatus.CREATED)
+    public String uploadThumbnail(@RequestParam("file") MultipartFile file, @RequestParam("videoId") String videoId) {
+        return videoService.uploadThumbnail(file, videoId);
+    }
+
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public VideoDto editVideoMetadata(@RequestBody @Validated VideoDto videoMetaDataDto) {
-        return videoService.editVideoMetadata(videoMetaDataDto);
+    public VideoDto editVideoMetadata(@RequestBody VideoDto videoDto) {
+        return videoService.editVideo(videoDto);
     }
 }

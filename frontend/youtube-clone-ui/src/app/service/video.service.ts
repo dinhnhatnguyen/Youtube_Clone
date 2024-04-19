@@ -11,11 +11,12 @@ import {UploadVideoResponse} from "../upload-video/UploadVideoResponse";
 export class VideoService {
   constructor(private httpService: HttpService) { }
 
-  uploadVideo(fileEntry: FileSystemFileEntry): Observable<UploadVideoResponse> {
-    return fileEntry.file(file => {
-      const fd = new FormData();
-      fd.append('file', file, file.name);
-      return this.httpService.post('http://localhost:8080/api/videos', fd);
-    });
+  uploadVideo(fileEntry: File): Observable<UploadVideoResponse> {
+    const formData = new FormData()
+    formData.append('file', fileEntry, fileEntry.name);
+
+    // HTTP Post call to upload the video
+    // @ts-ignore
+    return this.httpService.post<UploadVideoResponse>("http://localhost:8080/api/videos", formData);
   }
 }
