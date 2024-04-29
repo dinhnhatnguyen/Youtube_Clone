@@ -13,6 +13,9 @@ import {
 import {MatIcon} from "@angular/material/icon";
 import {MatButton} from "@angular/material/button";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
+import {ActivatedRoute} from "@angular/router";
+import {VideoService} from "../service/video.service";
+import {HttpClientModule} from "@angular/common/http";
 
 
 @Component({
@@ -42,8 +45,17 @@ export class SaveVideoDetailsComponent implements OnInit {
   title: FormControl = new FormControl('');
   description: FormControl = new FormControl('');
   videoStatus: FormControl = new FormControl('');
+  addOnBlur = true;
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  tags: string[] = [];
+  selectedFile!: File;
+  selectedFileName = '';
+  videoId = '';
+  fileSelected = false;
+  private announcer: any;
 
-  constructor() {
+  constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService) {
+    this.videoId = this.activatedRoute.snapshot.params["videoId"];
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
       description: this.description,
@@ -53,11 +65,8 @@ export class SaveVideoDetailsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  addOnBlur = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-  tags: string[] = [];
 
-  announcer = inject(LiveAnnouncer);
+
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -98,7 +107,19 @@ export class SaveVideoDetailsComponent implements OnInit {
   }
 
 
+  onFileSelected($event: Event) {
+    // @ts-ignore
+    this.selectedFile = $event.target.files[0];
+    this.selectedFileName = this.selectedFile.name;
+  }
 
+  onUpload() {
+    this.videoService.uploadThumbnail(this.selectedFile, this.videoId)
+      .subscribe(data => {
+        console.log(data);
+        // show an upload success notification.
+      })
+  }
 }
 
 

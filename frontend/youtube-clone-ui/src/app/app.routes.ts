@@ -10,3 +10,5 @@ export const routes: Routes = [
     path: 'save-video-details/:videoId', component: SaveVideoDetailsComponent
   }
 ];
+export class AppRoutingModule {
+}
