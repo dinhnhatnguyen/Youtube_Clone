@@ -1,7 +1,7 @@
 import {Injectable, NgModule} from '@angular/core';
 import { Observable } from 'rxjs';
-import {UploadVideoResponse} from "../upload-video/UploadVideoResponse";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {UploadVideoResponse} from "../upload-video/UploadVideoResponse";;
+import {HttpService} from "./httpService.service";
 
 
 @Injectable({
@@ -10,15 +10,15 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 
 export class VideoService {
 
-  constructor(private httpClient: HttpClient) {
-  }
+  constructor(private httpService: HttpService) { }
 
   uploadVideo(fileEntry: File): Observable<UploadVideoResponse> {
     const formData = new FormData()
     formData.append('file', fileEntry, fileEntry.name);
 
     // HTTP Post call to upload the video
-    return this.httpClient.post<UploadVideoResponse>("http://localhost:8080/api/videos", formData);
+    // @ts-ignore
+    return this.httpService.post<UploadVideoResponse>("http://localhost:8080/api/videos", formData);
   }
 
 
@@ -28,7 +28,8 @@ export class VideoService {
     formData.append('videoId', videoId);
 
     // HTTP Post call to upload the thumbnail
-    return this.httpClient.post("http://localhost:8080/api/videos/thumbnail", formData, {
+    // @ts-ignore
+    return this.httpService.post("http://localhost:8080/api/videos/thumbnail", formData, {
       responseType: 'text'
     });
   }

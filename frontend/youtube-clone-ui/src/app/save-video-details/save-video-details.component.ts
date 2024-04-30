@@ -15,7 +15,6 @@ import {MatButton} from "@angular/material/button";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 import {ActivatedRoute} from "@angular/router";
 import {VideoService} from "../service/video.service";
-import {HttpClientModule} from "@angular/common/http";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 
@@ -35,7 +34,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     MatIcon,
     MatButton,
     MatChipGrid,
-    MatChipRow
+    MatChipRow,
   ],
   templateUrl: './save-video-details.component.html',
   styleUrl: './save-video-details.component.css'
@@ -56,7 +55,7 @@ export class SaveVideoDetailsComponent implements OnInit {
   private announcer: any;
 
   constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService,
-              private matSnackBar: MatSnackBar) {
+              private _matSnackBar: MatSnackBar) {
     this.videoId = this.activatedRoute.snapshot.params["videoId"];
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
@@ -117,8 +116,9 @@ export class SaveVideoDetailsComponent implements OnInit {
 
   onUpload() {
     this.videoService.uploadThumbnail(this.selectedFile, this.videoId)
-      .subscribe(data => {
-        this.matSnackBar.open("Thumbnail Upload Successful", "OK");
+      .subscribe(() => {
+        // show an upload success notification.
+        this._matSnackBar.open("Thumbnail Upload Successful", "OK");
       })
   }
 }
