@@ -43,15 +43,18 @@ public class VideoService {
 
     public String uploadThumbnail(MultipartFile file, String videoId) {
         var savedVideo = getVideoById(videoId);
+
         String thumbnailUrl = s3Service.uploadFile(file);
+
         savedVideo.setThumbnailUrl(thumbnailUrl);
+
         videoRepository.save(savedVideo);
         return thumbnailUrl;
     }
 
     Video getVideoById(String videoId) {
         return videoRepository.findById(videoId)
-                .orElseThrow(() -> new YoutubeCloneException("Video not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find video by id - " + videoId));
     }
 
 
