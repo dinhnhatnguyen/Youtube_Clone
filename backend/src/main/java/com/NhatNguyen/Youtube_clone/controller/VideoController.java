@@ -29,7 +29,6 @@ public class VideoController {
         return videoService.uploadThumbnail(file, videoId);
     }
 
-
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public VideoDto editVideoMetadata(@RequestBody VideoDto videoDto) {

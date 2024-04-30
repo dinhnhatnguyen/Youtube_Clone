@@ -16,6 +16,7 @@ import {LiveAnnouncer} from "@angular/cdk/a11y";
 import {ActivatedRoute} from "@angular/router";
 import {VideoService} from "../service/video.service";
 import {HttpClientModule} from "@angular/common/http";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -54,7 +55,8 @@ export class SaveVideoDetailsComponent implements OnInit {
   fileSelected = false;
   private announcer: any;
 
-  constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService) {
+  constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService,
+              private matSnackBar: MatSnackBar) {
     this.videoId = this.activatedRoute.snapshot.params["videoId"];
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
@@ -116,8 +118,7 @@ export class SaveVideoDetailsComponent implements OnInit {
   onUpload() {
     this.videoService.uploadThumbnail(this.selectedFile, this.videoId)
       .subscribe(data => {
-        console.log(data);
-        // show an upload success notification.
+        this.matSnackBar.open("Thumbnail Upload Successful", "OK");
       })
   }
 }
