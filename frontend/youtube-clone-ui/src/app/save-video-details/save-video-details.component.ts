@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, ViewChild} from '@angular/core';
+import {Component, inject, NgZone, OnInit, ViewChild} from '@angular/core';
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatOption, MatSelect} from "@angular/material/select";
@@ -16,6 +16,7 @@ import {ActivatedRoute} from "@angular/router";
 import {VideoService} from "../service/video.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {VideoPlayerComponent} from "../video-player/video-player.component";
+import {tap} from "rxjs";
 
 
 @Component({
@@ -58,7 +59,7 @@ export class SaveVideoDetailsComponent implements OnInit {
   private announcer: any;
 
   constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService,
-              private matSnackBar: MatSnackBar) {
+              private matSnackBar: MatSnackBar, private ngZone: NgZone) {
 
     this.videoId = this.activatedRoute.snapshot.params["videoId"];
     this.videoService.getVideo(this.videoId).subscribe(data => {
@@ -67,11 +68,15 @@ export class SaveVideoDetailsComponent implements OnInit {
 
     // this.videoUrl = "https://ytclonebynhat.s3.ap-southeast-1.amazonaws.com/90f68a66-5666-4d68-a4c1-6b69c86dc0c4mp4";
 
+    setTimeout(() => {
+      console.log('videoUrl2:', this.videoUrl);
+    }, 2000);
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
       description: this.description,
       videoStatus: this.videoStatus,
     })
+
 
   }
 
