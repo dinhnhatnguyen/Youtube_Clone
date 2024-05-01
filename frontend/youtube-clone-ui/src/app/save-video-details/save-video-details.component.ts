@@ -12,10 +12,10 @@ import {
 } from "@angular/material/chips";
 import {MatIcon} from "@angular/material/icon";
 import {MatButton} from "@angular/material/button";
-import {LiveAnnouncer} from "@angular/cdk/a11y";
 import {ActivatedRoute} from "@angular/router";
 import {VideoService} from "../service/video.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {VideoPlayerComponent} from "../video-player/video-player.component";
 
 
 @Component({
@@ -35,7 +35,9 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     MatButton,
     MatChipGrid,
     MatChipRow,
+    VideoPlayerComponent,
   ],
+  providers: [VideoService],
   templateUrl: './save-video-details.component.html',
   styleUrl: './save-video-details.component.css'
 })
@@ -52,16 +54,25 @@ export class SaveVideoDetailsComponent implements OnInit {
   selectedFileName = '';
   videoId = '';
   fileSelected = false;
+  videoUrl!: string;
   private announcer: any;
 
   constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService,
-              private _matSnackBar: MatSnackBar) {
+              private matSnackBar: MatSnackBar) {
+
     this.videoId = this.activatedRoute.snapshot.params["videoId"];
+    this.videoService.getVideo(this.videoId).subscribe(data => {
+      this.videoUrl = data.videoUrl;
+    })
+
+    // this.videoUrl = "https://ytclonebynhat.s3.ap-southeast-1.amazonaws.com/90f68a66-5666-4d68-a4c1-6b69c86dc0c4mp4";
+
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
       description: this.description,
       videoStatus: this.videoStatus,
     })
+
   }
 
   ngOnInit(): void {}
@@ -118,7 +129,7 @@ export class SaveVideoDetailsComponent implements OnInit {
     this.videoService.uploadThumbnail(this.selectedFile, this.videoId)
       .subscribe(() => {
         // show an upload success notification.
-        this._matSnackBar.open("Thumbnail Upload Successful", "OK");
+        this.matSnackBar.open("Thumbnail Upload Successful", "OK");
       })
   }
 }

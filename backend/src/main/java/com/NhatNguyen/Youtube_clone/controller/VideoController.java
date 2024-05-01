@@ -4,6 +4,7 @@ import com.NhatNguyen.Youtube_clone.dto.UploadVideoResponse;
 import com.NhatNguyen.Youtube_clone.dto.VideoDto;
 import com.NhatNguyen.Youtube_clone.exception.YoutubeCloneException;
 import com.NhatNguyen.Youtube_clone.service.VideoService;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +34,11 @@ public class VideoController {
     @ResponseStatus(HttpStatus.OK)
     public VideoDto editVideoMetadata(@RequestBody VideoDto videoDto) {
         return videoService.editVideo(videoDto);
+    }
+
+    @GetMapping("/{videoId}")
+    @ResponseStatus(HttpStatus.OK)
+    public VideoDto getVideoDetails(@PathVariable String videoId) {
+        return videoService.getVideoDetails(videoId);
     }
 }
