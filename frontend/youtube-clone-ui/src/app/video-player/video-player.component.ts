@@ -17,9 +17,12 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
   templateUrl: './video-player.component.html',
   styleUrl: './video-player.component.css'
 })
-export class VideoPlayerComponent {
+export class VideoPlayerComponent implements OnInit{
 
   @Input()
   videoUrl!: string | '';
+
+  constructor() {}
+  ngOnInit(): void {}
 
 }

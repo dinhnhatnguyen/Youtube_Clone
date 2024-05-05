@@ -17,6 +17,7 @@ import {VideoService} from "../service/video.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {VideoPlayerComponent} from "../video-player/video-player.component";
 import {tap} from "rxjs";
+import {NgIf} from "@angular/common";
 
 
 @Component({
@@ -37,6 +38,7 @@ import {tap} from "rxjs";
     MatChipGrid,
     MatChipRow,
     VideoPlayerComponent,
+    NgIf,
   ],
   providers: [VideoService],
   templateUrl: './save-video-details.component.html',
@@ -48,6 +50,8 @@ export class SaveVideoDetailsComponent implements OnInit {
   title: FormControl = new FormControl('');
   description: FormControl = new FormControl('');
   videoStatus: FormControl = new FormControl('');
+  selectable = true;
+  removable = true;
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   tags: string[] = [];
@@ -56,34 +60,35 @@ export class SaveVideoDetailsComponent implements OnInit {
   videoId = '';
   fileSelected = false;
   videoUrl!: string;
-  private announcer: any;
 
   constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService,
-              private matSnackBar: MatSnackBar, private ngZone: NgZone) {
-
+              private matSnackBar: MatSnackBar) {
     this.videoId = this.activatedRoute.snapshot.params["videoId"];
     this.videoService.getVideo(this.videoId).subscribe(data => {
       this.videoUrl = data.videoUrl;
     })
 
-    // this.videoUrl = "https://ytclonebynhat.s3.ap-southeast-1.amazonaws.com/90f68a66-5666-4d68-a4c1-6b69c86dc0c4mp4";
+    // this.videoUrl = "https://ytclonebynhat.s3.ap-southeast-1.amazonaws.com/8a27fa72-69a6-435e-8d89-ee63ac0267f3mp4";
 
     setTimeout(() => {
-      console.log('videoUrl2:', this.videoUrl);
-    }, 2000);
+      console.log(this.videoUrl + " | " +  this.videoId)
+    },5000)
+
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
       description: this.description,
       videoStatus: this.videoStatus,
     })
-
-
   }
 
-  ngOnInit(): void {}
-
-
-
+  ngOnInit(): void {
+    this.activatedRoute.params.subscribe(params => {
+      const videoId = params['videoId'];
+      this.videoService.getVideo(videoId).subscribe(data => {
+        this.videoUrl = data.videoUrl;
+      });
+    });
+  }
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
@@ -102,8 +107,6 @@ export class SaveVideoDetailsComponent implements OnInit {
 
     if (index >= 0) {
       this.tags.splice(index, 1);
-
-      this.announcer.announce(`Removed ${value}`);
     }
   }
 
@@ -123,11 +126,11 @@ export class SaveVideoDetailsComponent implements OnInit {
     }
   }
 
-
-  onFileSelected($event: Event) {
+  onFileSelected(event: Event) {
     // @ts-ignore
-    this.selectedFile = $event.target.files[0];
+    this.selectedFile = event.target.files[0];
     this.selectedFileName = this.selectedFile.name;
+    this.fileSelected = true;
   }
 
   onUpload() {
@@ -137,6 +140,8 @@ export class SaveVideoDetailsComponent implements OnInit {
         this.matSnackBar.open("Thumbnail Upload Successful", "OK");
       })
   }
+
+
 }
 
 
