@@ -34,7 +34,6 @@
               <mat-chip-row
                 (removed)="remove(tag)"
                 [editable]="true"
-                (edited)="edit(tag, $event)"
                 [aria-description]="'press enter to edit ' + tag">
                 {{tag}}
                 <button matChipRemove [attr.aria-label]="'remove ' + tag">
