@@ -1,4 +1,4 @@
-import {Component, inject, NgZone, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
 import {MatOption, MatSelect} from "@angular/material/select";
@@ -6,7 +6,7 @@ import {FlexLayoutModule} from "@angular/flex-layout";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {
-  MatChip, MatChipEditedEvent, MatChipGrid,
+  MatChip, MatChipGrid,
   MatChipInput,
   MatChipInputEvent, MatChipRow,
 } from "@angular/material/chips";
@@ -16,8 +16,8 @@ import {ActivatedRoute} from "@angular/router";
 import {VideoService} from "../service/video.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {VideoPlayerComponent} from "../video-player/video-player.component";
-import {tap} from "rxjs";
 import {NgIf} from "@angular/common";
+import {VideoDto} from "../dto/video-dto";
 
 
 @Component({
@@ -50,8 +50,8 @@ export class SaveVideoDetailsComponent implements OnInit {
   title: FormControl = new FormControl('');
   description: FormControl = new FormControl('');
   videoStatus: FormControl = new FormControl('');
-  selectable = true;
-  removable = true;
+  // selectable = true;
+  // removable = true;
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   tags: string[] = [];
@@ -60,19 +60,15 @@ export class SaveVideoDetailsComponent implements OnInit {
   videoId = '';
   fileSelected = false;
   videoUrl!: string;
+  thumbnailUrl!: string;
 
   constructor(private activatedRoute: ActivatedRoute, private videoService: VideoService,
               private matSnackBar: MatSnackBar) {
     this.videoId = this.activatedRoute.snapshot.params["videoId"];
     this.videoService.getVideo(this.videoId).subscribe(data => {
       this.videoUrl = data.videoUrl;
+      this.thumbnailUrl = data.thumbnailUrl;
     })
-
-    // this.videoUrl = "https://ytclonebynhat.s3.ap-southeast-1.amazonaws.com/8a27fa72-69a6-435e-8d89-ee63ac0267f3mp4";
-
-    setTimeout(() => {
-      console.log(this.videoUrl + " | " +  this.videoId)
-    },5000)
 
     this.saveVideoDetailsForm = new FormGroup({
       title: this.title,
@@ -86,6 +82,7 @@ export class SaveVideoDetailsComponent implements OnInit {
       const videoId = params['videoId'];
       this.videoService.getVideo(videoId).subscribe(data => {
         this.videoUrl = data.videoUrl;
+        this.thumbnailUrl = data.thumbnailUrl;
       });
     });
   }
@@ -93,7 +90,6 @@ export class SaveVideoDetailsComponent implements OnInit {
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
-    // Add our fruit
     if (value) {
       this.tags.push(value);
     }
@@ -127,6 +123,20 @@ export class SaveVideoDetailsComponent implements OnInit {
   }
 
 
+  saveVideo() {
+    const videoMetaData: VideoDto = {
+      "id": this.videoId,
+      "title": this.saveVideoDetailsForm.get('title')?.value,
+      "description": this.saveVideoDetailsForm.get('description')?.value,
+      "tags": this.tags,
+      "videoStatus": this.saveVideoDetailsForm.get("videoStatus")?.value,
+      "videoUrl": this.videoUrl,
+      "thumbnailUrl": this.thumbnailUrl,
+    }
+    this.videoService.saveVideo(videoMetaData).subscribe(data => {
+      this.matSnackBar.open("Video Metadata Update successfully", "OK");
+    })
+  }
 }
 
 
