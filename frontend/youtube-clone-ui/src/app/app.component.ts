@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {FormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
@@ -15,6 +15,7 @@ import {VgControlsModule} from "@videogular/ngx-videogular/controls";
 import {VgOverlayPlayModule} from "@videogular/ngx-videogular/overlay-play";
 import {VgBufferingModule} from "@videogular/ngx-videogular/buffering";
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {LoginResponse, OidcSecurityService} from "angular-auth-oidc-client";
 
 
 @Component({
@@ -40,6 +41,17 @@ import {MatSnackBar} from "@angular/material/snack-bar";
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'youtube-clone-ui';
+
+  constructor(private oidcSecurityService: OidcSecurityService) {
+  }
+
+  ngOnInit(): void {
+    this.oidcSecurityService
+      .checkAuth()
+      .subscribe(({isAuthenticated}) => {
+        console.log('app is authenticated ',isAuthenticated);
+      });
+  }
 }
